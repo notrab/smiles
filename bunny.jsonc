@@ -1,0 +1,7 @@
+{
+  // `bunny sites deploy` picks these up, so a bare `bunny sites deploy` works.
+  "sites": {
+    "name": "smiles",
+    "dir": "./site",
+  },
+}

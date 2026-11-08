@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard, Smiles</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='21' fill='none' stroke='%2349b571' stroke-width='4'/><circle cx='16' cy='18' r='3' fill='%2349b571'/><circle cx='32' cy='18' r='3' fill='%2349b571'/><path d='M14,25 Q24,35 34,25' fill='none' stroke='%2349b571' stroke-width='4' stroke-linecap='round'/></svg>">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="color:#49b571">
+        <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="3.5"/>
+        <circle cx="16" cy="18" r="3" fill="currentColor"/>
+        <circle cx="32" cy="18" r="3" fill="currentColor"/>
+        <path d="M14,25 Q24,35 34,25" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      Smiles
+    </a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="how-it-works.html">How it works</a>
+      <a href="signup.html">Sign up</a>
+      <a class="active" href="app.html">Dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section style="padding-top:40px">
+  <div class="wrap narrow">
+    <div id="flash"></div>
+
+    <!-- sign in -->
+    <div class="panel" id="signin" hidden>
+      <h3>Open your dashboard</h3>
+      <p class="muted">Your site key and admin token were printed when the site was created.</p>
+      <div class="field">
+        <label for="key">Site key</label>
+        <input id="key" placeholder="acme" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="token">Admin token</label>
+        <input id="token" type="password" placeholder="•••••••••••••" autocomplete="off">
+      </div>
+      <button class="btn" id="signin-go">Open</button>
+      <p class="hint" style="margin-top:14px">No site yet? <a href="signup.html">Create one</a>, it takes a few seconds.</p>
+    </div>
+
+    <!-- dashboard -->
+    <div id="app" hidden>
+      <div class="row" style="align-items:baseline;margin-bottom:24px">
+        <h1 style="font-size:32px;margin:0" id="site-name">Your site</h1>
+        <p style="margin:0;text-align:right;flex:0 0 auto">
+          <button class="btn btn-small btn-quiet" id="signout">Sign out</button>
+        </p>
+      </div>
+
+      <div class="tiles">
+        <div class="tile">
+          <span class="tile-label">Satisfaction</span>
+          <span class="tile-value" data-score>n/a</span>
+          <span class="tile-sub">answers that were awesome</span>
+        </div>
+        <div class="tile">
+          <span class="tile-label">Answers</span>
+          <span class="tile-value" data-total>0</span>
+          <span class="tile-sub">all time</span>
+        </div>
+        <div class="tile">
+          <span class="tile-label">Not good</span>
+          <span class="tile-value" data-bad-count>0</span>
+          <span class="tile-sub">worth a reply</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h4>The breakdown</h4>
+        <div class="chart" id="chart">
+          <div class="chart-row">
+            <span>Awesome</span>
+            <span class="bar"><i class="fill-great" data-bar="great" style="width:0%"></i></span>
+            <span data-count="great">0</span>
+          </div>
+          <div class="chart-row">
+            <span>Just OK</span>
+            <span class="bar"><i class="fill-ok" data-bar="ok" style="width:0%"></i></span>
+            <span data-count="ok">0</span>
+          </div>
+          <div class="chart-row">
+            <span>Not good</span>
+            <span class="bar"><i class="fill-bad" data-bar="bad" style="width:0%"></i></span>
+            <span data-count="bad">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Your question</h3></div>
+        <div class="row">
+          <div class="field" style="margin:0">
+            <label for="question">Asked on every widget</label>
+            <input id="question" placeholder="How are we doing?">
+          </div>
+          <p style="flex:0 0 auto;margin:0"><button class="btn btn-small" id="save-question">Save</button></p>
+        </div>
+        <div class="field" style="margin-top:20px">
+          <label>Install snippet</label>
+          <pre style="margin:0"><code id="snippet">…</code></pre>
+          <p class="hint">Add <code>&lt;div data-smiles&gt;&lt;/div&gt;</code> anywhere in the page for an inline question.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Where answers go</h3></div>
+        <p class="muted" style="margin-bottom:18px">Every answer is sent to each destination below. Tick “only unhappy answers” if you'd rather hear about the bad ones alone.</p>
+        <div id="destinations"></div>
+
+        <div style="margin-top:22px;padding-top:22px;border-top:1px solid var(--line)">
+          <div class="field">
+            <label for="kind">Add a destination</label>
+            <select id="kind">
+              <option value="email">Email (via Resend)</option>
+              <option value="slack">Slack</option>
+              <option value="discord">Discord</option>
+              <option value="webhook">Custom webhook</option>
+            </select>
+          </div>
+          <div id="dest-fields"></div>
+          <label style="display:block;margin:6px 0 16px;font-size:14px;color:var(--muted)">
+            <input type="checkbox" id="only-bad" style="width:auto;margin-right:6px">only unhappy answers
+          </label>
+          <button class="btn btn-small" id="connect-resend" hidden>Connect Resend</button>
+          <button class="btn btn-small btn-quiet" id="add-dest">Add destination</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h3>Recent answers</h3></div>
+        <div id="answers"><p class="empty">Nothing yet.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Smiles, an open source example built on bunny.net</span>
+    <nav>
+      <a href="how-it-works.html">How it works</a>
+      <a href="https://github.com/notrab/smiles">Source</a>
+    </nav>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var config = window.SMILES || {};
+  var api = (config.api || '').replace(/\/+$/, '');
+  var store = window.localStorage;
+  var creds = { key: store.getItem('smiles.key') || '', token: store.getItem('smiles.token') || '' };
+  var caps = { connect: {}, resend_api_key: false };
+
+  var $ = function (sel) { return document.querySelector(sel); };
+
+  var FIELDS = {
+    email: [
+      { name: 'to', label: 'Send to', placeholder: 'you@example.com' },
+      { name: 'from', label: 'From', placeholder: 'Smiles <smiles@yourdomain.com>', hint: 'A domain you have verified with Resend. Falls back to the RESEND_FROM set on the API.' }
+    ],
+    slack: [
+      { name: 'webhook_url', label: 'Incoming webhook URL', placeholder: 'https://hooks.slack.com/services/…', hint: 'Or use the Add to Slack button above, if the deployment has Slack credentials.' }
+    ],
+    discord: [
+      { name: 'webhook_url', label: 'Channel webhook URL', placeholder: 'https://discord.com/api/webhooks/…', hint: 'Discord: Channel settings → Integrations → Webhooks → New webhook → Copy URL.' }
+    ],
+    webhook: [
+      { name: 'url', label: 'Endpoint', placeholder: 'https://example.com/smiles' },
+      { name: 'secret', label: 'Signing secret (optional)', placeholder: 'a long random string', hint: 'We send x-smiles-signature: sha256=<hmac of the body>.' }
+    ]
+  };
+
+  function flash(message, tone) {
+    $('#flash').innerHTML = message
+      ? '<div class="notice ' + (tone || '') + '">' + message + '</div>'
+      : '';
+    if (message) window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function call(path, options) {
+    var opts = options || {};
+    return fetch(api + path, {
+      method: opts.method || 'GET',
+      headers: Object.assign(
+        { authorization: 'Bearer ' + creds.token },
+        opts.body ? { 'content-type': 'application/json' } : {}
+      ),
+      body: opts.body ? JSON.stringify(opts.body) : undefined
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (data) {
+        if (!res.ok) throw new Error(data.error || ('request failed (' + res.status + ')'));
+        return data;
+      });
+    });
+  }
+
+  /* ---- sign in ---- */
+
+  function showSignIn() {
+    $('#signin').hidden = false;
+    $('#app').hidden = true;
+    $('#key').value = creds.key;
+  }
+
+  $('#signin-go').addEventListener('click', function () {
+    creds = { key: $('#key').value.trim(), token: $('#token').value.trim() };
+    if (!creds.key || !creds.token) return flash('Both the site key and the admin token, please.', 'bad');
+    load();
+  });
+
+  $('#signout').addEventListener('click', function () {
+    store.removeItem('smiles.key');
+    store.removeItem('smiles.token');
+    creds = { key: '', token: '' };
+    flash('');
+    showSignIn();
+  });
+
+  /* ---- load + render ---- */
+
+  function load() {
+    if (!api) {
+      showSignIn();
+      return flash('config.js has no API URL yet. Run scripts/setup.sh.', 'bad');
+    }
+    if (!creds.key || !creds.token) return showSignIn();
+
+    fetch(api + '/v1/config')
+      .then(function (r) { return r.json(); })
+      .then(function (data) { caps = data; renderFields(); })
+      .catch(function () { /* connect buttons stay hidden */ });
+
+    call('/v1/sites/' + creds.key).then(function (data) {
+      store.setItem('smiles.key', creds.key);
+      store.setItem('smiles.token', creds.token);
+      $('#signin').hidden = true;
+      $('#app').hidden = false;
+      $('#site-name').textContent = data.site.name;
+      $('#question').value = data.site.question;
+      $('#snippet').textContent =
+        '<script src="' + (config.widget || 'https://your-widget-host') + '/' + creds.key + '.js?tab=1" async><\/script>';
+      renderDestinations(data.destinations);
+      refreshStats();
+      refreshAnswers();
+    }).catch(function (err) {
+      flash(err.message, 'bad');
+      showSignIn();
+    });
+  }
+
+  function refreshStats() {
+    fetch(api + '/v1/stats/' + creds.key).then(function (r) { return r.json(); }).then(function (stats) {
+      var chart = $('#chart');
+      ['great', 'ok', 'bad'].forEach(function (key) {
+        var pct = stats.total ? Math.round((stats[key] / stats.total) * 100) : 0;
+        chart.querySelector('[data-bar="' + key + '"]').style.width = pct + '%';
+        chart.querySelector('[data-count="' + key + '"]').textContent = stats[key];
+      });
+      $('[data-score]').textContent = stats.score === null ? 'n/a' : stats.score + '%';
+      $('[data-total]').textContent = stats.total;
+      $('[data-bad-count]').textContent = stats.bad;
+    });
+  }
+
+  var LABELS = { great: 'Awesome', ok: 'Just OK', bad: 'Not good' };
+
+  function refreshAnswers() {
+    call('/v1/sites/' + creds.key + '/answers?limit=25').then(function (data) {
+      if (!data.answers.length) {
+        $('#answers').innerHTML = '<p class="empty">Nothing yet.</p>';
+        return;
+      }
+      $('#answers').innerHTML = data.answers.map(function (a) {
+        return '<div class="answer-row">' +
+          '<span><span class="pill pill-' + a.answer + '">' + LABELS[a.answer] + '</span></span>' +
+          '<span>' + (a.note ? escapeHtml(a.note) : '<span class="empty">no comment</span>') + '</span>' +
+          '<time>' + a.created_at.replace('T', ' ').slice(0, 16) + '</time>' +
+          '</div>';
+      }).join('');
+    });
+  }
+
+  function escapeHtml(text) {
+    return text.replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  function describe(dest) {
+    var c = dest.config;
+    if (dest.kind === 'email') return c.to;
+    if (dest.kind === 'webhook') return c.url;
+    return (c.webhook_url || '').split('?')[0];
+  }
+
+  function renderDestinations(destinations) {
+    var host = $('#destinations');
+    if (!destinations.length) {
+      host.innerHTML = '<p class="empty">No destinations yet. Answers are still recorded, they just stay in the dashboard.</p>';
+      return;
+    }
+    host.innerHTML = destinations.map(function (d) {
+      return '<div class="dest">' +
+        '<span class="tag">' + d.kind + '</span>' +
+        '<span class="dest-main"><strong>' + escapeHtml(d.label || LABELS_KIND[d.kind]) + '</strong>' +
+        '<span>' + escapeHtml(describe(d)) + (d.only_bad ? ' · unhappy answers only' : '') + '</span></span>' +
+        '<button class="btn btn-small btn-quiet" data-test="' + d.id + '">Test</button> ' +
+        '<button class="btn btn-small btn-quiet" data-remove="' + d.id + '">Remove</button>' +
+        '</div>';
+    }).join('');
+
+    host.querySelectorAll('[data-test]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        btn.textContent = 'Sending…';
+        call('/v1/sites/' + creds.key + '/destinations/' + btn.dataset.test + '/test', { method: 'POST' })
+          .then(function () { flash('Test sent.', 'good'); })
+          .catch(function (err) { flash('Test failed: ' + err.message, 'bad'); })
+          .then(function () { btn.textContent = 'Test'; });
+      });
+    });
+
+    host.querySelectorAll('[data-remove]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        call('/v1/sites/' + creds.key + '/destinations/' + btn.dataset.remove, { method: 'DELETE' })
+          .then(load)
+          .catch(function (err) { flash(err.message, 'bad'); });
+      });
+    });
+  }
+
+  var LABELS_KIND = { email: 'Email', slack: 'Slack', discord: 'Discord', webhook: 'Webhook' };
+
+  /* ---- add a destination ---- */
+
+  function connectUrl(kind, extra) {
+    var params = new URLSearchParams(Object.assign(
+      { site: creds.key, token: creds.token },
+      extra || {}
+    ));
+    return api + '/v1/connect/' + kind + '/start?' + params;
+  }
+
+  function renderFields() {
+    var kind = $('#kind').value;
+    var fields = FIELDS[kind].slice();
+    var connect = '';
+
+    if ((kind === 'slack' || kind === 'discord') && caps.connect[kind]) {
+      connect = '<p style="margin:0 0 14px"><a class="btn btn-small" href="' + connectUrl(kind) +
+        '">Add to ' + LABELS_KIND[kind] + '</a> <span class="muted">or paste a webhook URL below.</span></p>';
+    }
+
+    if (kind === 'email' && caps.connect.resend) {
+      connect = '<p style="margin:0 0 14px" class="muted">Fill in the address below, then connect your Resend ' +
+        'account. No API key changes hands, and you can revoke it from Resend at any time.</p>';
+    }
+
+    if (kind === 'email' && !caps.connect.resend && !caps.resend_api_key) {
+      fields.push({ name: 'api_key', label: 'Resend API key', placeholder: 're_…',
+        hint: 'Only needed because this deployment has neither a Resend connection nor RESEND_API_KEY set.' });
+    }
+
+    $('#dest-fields').innerHTML = connect + fields.map(function (f) {
+      return '<div class="field"><label for="f-' + f.name + '">' + f.label + '</label>' +
+        '<input id="f-' + f.name + '" data-field="' + f.name + '" placeholder="' + f.placeholder + '">' +
+        (f.hint ? '<p class="hint">' + f.hint + '</p>' : '') + '</div>';
+    }).join('');
+
+    $('#connect-resend').hidden = !(kind === 'email' && caps.connect.resend);
+  }
+
+  $('#connect-resend').addEventListener('click', function () {
+    var to = ($('#f-to') || {}).value || '';
+    var from = ($('#f-from') || {}).value || '';
+    if (!to.trim()) return flash('Which address should the answers go to?', 'bad');
+    location.href = connectUrl('resend', { to: to.trim(), from: from.trim() });
+  });
+
+  $('#kind').addEventListener('change', renderFields);
+
+  $('#add-dest').addEventListener('click', function () {
+    var kind = $('#kind').value;
+    var body = { kind: kind, config: {}, only_bad: $('#only-bad').checked };
+    $('#dest-fields').querySelectorAll('[data-field]').forEach(function (input) {
+      if (input.value.trim()) body.config[input.dataset.field] = input.value.trim();
+    });
+    call('/v1/sites/' + creds.key + '/destinations', { method: 'POST', body: body })
+      .then(function () { flash('Destination added.', 'good'); renderFields(); load(); })
+      .catch(function (err) { flash(err.message, 'bad'); });
+  });
+
+  $('#save-question').addEventListener('click', function () {
+    call('/v1/sites/' + creds.key, { method: 'PATCH', body: { question: $('#question').value.trim() } })
+      .then(function () { flash('Question saved.', 'good'); })
+      .catch(function (err) { flash(err.message, 'bad'); });
+  });
+
+  if (location.hash.indexOf('connected=') > -1) {
+    flash('Connected ' + location.hash.split('connected=')[1] + '.', 'good');
+    history.replaceState(null, '', location.pathname);
+  }
+
+  renderFields();
+  load();
+}());
+</script>
+</body>
+</html>

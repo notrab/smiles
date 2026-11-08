@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How it works, Smiles</title>
+<meta name="description" content="Ask one question, get an answer in one click, and watch the score move.">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='21' fill='none' stroke='%2349b571' stroke-width='4'/><circle cx='16' cy='18' r='3' fill='%2349b571'/><circle cx='32' cy='18' r='3' fill='%2349b571'/><path d='M14,25 Q24,35 34,25' fill='none' stroke='%2349b571' stroke-width='4' stroke-linecap='round'/></svg>">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="color:#49b571">
+        <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="3.5"/>
+        <circle cx="16" cy="18" r="3" fill="currentColor"/>
+        <circle cx="32" cy="18" r="3" fill="currentColor"/>
+        <path d="M14,25 Q24,35 34,25" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      Smiles
+    </a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a class="active" href="how-it-works.html">How it works</a>
+      <a href="signup.html">Sign up</a>
+      <a href="app.html">Log in</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="wrap">
+    <h1>How it works</h1>
+    <p class="lede">One question, one click to answer, one number to watch.</p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap narrow">
+    <div class="panel" style="padding:32px">
+      <div class="steps">
+        <div class="step">
+          <span class="step-num">1</span>
+          <div>
+            <h3>Write the question</h3>
+            <p>One question, in your words. "How was your checkout?" "Did that answer help?" Short questions get answered. Surveys get closed.</p>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">2</span>
+          <div>
+            <h3>Paste one script tag</h3>
+            <p>Your site key is already in it. Add <code>?tab=1</code> for the corner tab, or drop a <code>div</code> anywhere you want the question inline.</p>
+            <pre><code>&lt;script src="https://your-widget-host/your-key.js?tab=1" async&gt;&lt;/script&gt;
+
+&lt;!-- or inline, wherever you want it --&gt;
+&lt;div data-smiles data-question="How was your checkout?"&gt;&lt;/div&gt;</code></pre>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">3</span>
+          <div>
+            <h3>People answer with a face</h3>
+            <p>Awesome, just OK, not good. That is the whole survey. Anyone who wants to say more gets a comment box after they pick, and most will not bother, which is fine.</p>
+            <div data-smiles data-question="How was that explanation?" style="margin:20px 0 4px"></div>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-num">4</span>
+          <div>
+            <h3>You get a score, and the answers</h3>
+            <p>Your score is the share of answers that were awesome. Every answer also goes wherever you point it: email, Slack, Discord, or your own webhook. Ship a change, watch the number, follow up on the unhappy ones the same day.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap">
+    <h2>Two minutes to install</h2>
+    <p>Then you never have to wonder how it is going.</p>
+    <a class="btn" href="signup.html">Create your site</a>
+  </div>
+</div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Smiles, an open source example built on bunny.net</span>
+    <nav>
+      <a href="how-it-works.html">How it works</a>
+      <a href="signup.html">Sign up</a>
+      <a href="https://github.com/notrab/smiles">Source</a>
+    </nav>
+  </div>
+</footer>
+<script src="config.js"></script>
+<script src="assets/js/boot.js"></script>
+</body>
+</html>

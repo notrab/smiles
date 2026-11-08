@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign up, Smiles</title>
+<meta name="description" content="Create a Smiles site: a site key, a dashboard, and a script tag.">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='21' fill='none' stroke='%2349b571' stroke-width='4'/><circle cx='16' cy='18' r='3' fill='%2349b571'/><circle cx='32' cy='18' r='3' fill='%2349b571'/><path d='M14,25 Q24,35 34,25' fill='none' stroke='%2349b571' stroke-width='4' stroke-linecap='round'/></svg>">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 48 48" aria-hidden="true" style="color:#49b571">
+        <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="3.5"/>
+        <circle cx="16" cy="18" r="3" fill="currentColor"/>
+        <circle cx="32" cy="18" r="3" fill="currentColor"/>
+        <path d="M14,25 Q24,35 34,25" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      Smiles
+    </a>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="how-it-works.html">How it works</a>
+      <a class="active" href="signup.html">Sign up</a>
+      <a href="app.html">Log in</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero" style="padding-bottom:40px">
+  <div class="wrap">
+    <h1>Create your site</h1>
+    <p class="lede">Takes a few seconds. You get a site key, a dashboard, and a script tag to paste.</p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap" style="max-width:520px">
+    <div class="panel" id="signup-form" style="padding:28px">
+      <div id="signup-flash"></div>
+      <div class="field">
+        <label for="su-name">What are you measuring?</label>
+        <input id="su-name" placeholder="Acme checkout" autocomplete="organization">
+      </div>
+      <div class="field">
+        <label for="su-email">Your email</label>
+        <input id="su-email" type="email" placeholder="you@example.com" autocomplete="email">
+        <p class="hint">Used to reach you about your site. No list, no newsletter.</p>
+      </div>
+      <div class="field">
+        <label for="su-question">The question you want to ask</label>
+        <input id="su-question" placeholder="How are we doing?">
+      </div>
+      <button class="btn" id="su-go" style="width:100%">Create my site</button>
+      <p class="hint" style="margin-top:14px;text-align:center">Already have a site? <a href="app.html">Log in</a>.</p>
+    </div>
+
+    <div class="panel" id="signup-done" hidden style="padding:28px">
+      <h3 style="font-size:20px">You are set up</h3>
+      <p class="muted">Save the admin token somewhere safe. It is the password to your dashboard, and it is not shown again.</p>
+      <div class="field" style="margin-top:22px">
+        <label>Site key</label>
+        <pre style="margin:0"><code id="su-key"></code></pre>
+      </div>
+      <div class="field">
+        <label>Admin token</label>
+        <pre style="margin:0"><code id="su-token"></code></pre>
+      </div>
+      <div class="field">
+        <label>Your script tag</label>
+        <pre style="margin:0"><code id="su-snippet"></code></pre>
+      </div>
+      <a class="btn" id="su-dashboard" href="app.html" style="width:100%;text-align:center">Open my dashboard</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>Smiles, an open source example built on bunny.net</span>
+    <nav>
+      <a href="how-it-works.html">How it works</a>
+      <a href="signup.html">Sign up</a>
+      <a href="https://github.com/notrab/smiles">Source</a>
+    </nav>
+  </div>
+</footer>
+<script src="config.js"></script>
+<script src="assets/js/boot.js"></script>
+<script>
+(function () {
+  var config = window.SMILES || {};
+  var api = (config.api || '').replace(/\/+$/, '');
+  var $ = function (id) { return document.getElementById(id); };
+
+  function flash(message, tone) {
+    $('signup-flash').innerHTML = message ? '<div class="notice ' + (tone || '') + '">' + message + '</div>' : '';
+  }
+
+  $('su-go').addEventListener('click', function () {
+    if (!api) return flash('This deployment has no API configured yet.', 'bad');
+
+    var body = {
+      name: $('su-name').value.trim(),
+      email: $('su-email').value.trim(),
+      question: $('su-question').value.trim() || 'How are we doing?'
+    };
+    if (!body.name) return flash('What should we call your site?', 'bad');
+    if (!body.email) return flash('We need an email address.', 'bad');
+
+    $('su-go').disabled = true;
+    $('su-go').textContent = 'Creating...';
+
+    fetch(api + '/v1/signup', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body)
+    }).then(function (res) {
+      return res.json().then(function (data) {
+        if (!res.ok) throw new Error(data.error || 'that did not work');
+        return data;
+      });
+    }).then(function (data) {
+      try {
+        localStorage.setItem('smiles.key', data.key);
+        localStorage.setItem('smiles.token', data.admin_token);
+      } catch (e) { /* the tokens are on screen either way */ }
+
+      $('su-key').textContent = data.key;
+      $('su-token').textContent = data.admin_token;
+      $('su-snippet').textContent =
+        '<script src="' + (config.widget || '') + '/' + data.key + '.js?tab=1" async><\/script>';
+      $('signup-form').hidden = true;
+      $('signup-done').hidden = false;
+    }).catch(function (err) {
+      flash(err.message, 'bad');
+    }).then(function () {
+      $('su-go').disabled = false;
+      $('su-go').textContent = 'Create my site';
+    });
+  });
+}());
+</script>
+</body>
+</html>
