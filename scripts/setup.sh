@@ -3,8 +3,8 @@
 # Provisions Smiles on bunny.net, end to end:
 #
 #   1. a Bunny Database:        sites, answers, destinations
-#   2. the API Edge Script:     records answers, fans them out
-#   3. the widget Edge Script:  serves /<site-key>.js
+#   2. the API Edge Script:     records answers, fans them out (built from TypeScript)
+#   3. the widget Edge Script:  serves /<site-key>.js (built from TypeScript)
 #   4. a static site (Storage): marketing pages + dashboard
 #   5. a demo site row:         so the home page has something to show
 #
@@ -20,7 +20,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
 command -v bunny >/dev/null || { echo "The bunny CLI is missing: npm install -g @bunny.net/cli"; exit 1; }
-command -v node  >/dev/null || { echo "node is needed to read the CLI's JSON output."; exit 1; }
+command -v node  >/dev/null || { echo "node is needed to build the Edge Scripts."; exit 1; }
+command -v npm   >/dev/null || { echo "npm is needed to install the build dependencies."; exit 1; }
 bunny api GET /user --output json >/dev/null 2>&1 || { echo "Not logged in. Run: bunny login"; exit 1; }
 
 say() { printf '\n\033[1m%s\033[0m\n' "$*"; }
@@ -132,9 +133,15 @@ say "Setting environment variables…"
 )
 (cd widget && bunny scripts env set SMILES_API_URL "$API_URL")
 
+say "Building the edge scripts…"
+[ -d node_modules ] || npm install
+npm run build
+
 say "Deploying the edge scripts…"
-(cd api && bunny scripts deploy src/main.js)
-(cd widget && bunny scripts deploy src/main.js)
+# Each script resolves its id from .bunny/script.json in its own directory,
+# so deploy from there and point at the bundle.
+(cd api && bunny scripts deploy ../dist/api.js)
+(cd widget && bunny scripts deploy ../dist/widget.js)
 
 # ---------------------------------------------------------------- demo site row
 

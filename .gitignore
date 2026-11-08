@@ -6,3 +6,6 @@ node_modules/
 
 # Written by scripts/setup.sh with your own deployment's URLs.
 site/config.js
+
+# Built by `npm run build`.
+dist/

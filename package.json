@@ -1,0 +1,24 @@
+{
+  "name": "smiles",
+  "version": "1.0.0",
+  "description": "One question customer satisfaction, running entirely on bunny.net.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit",
+    "build": "node scripts/build.mjs",
+    "deploy": "npm run deploy:api && npm run deploy:widget",
+    "deploy:api": "npm run build && cd api && bunny scripts deploy ../dist/api.js",
+    "deploy:widget": "npm run build && cd widget && bunny scripts deploy ../dist/widget.js",
+    "dev": "python3 -m http.server 4173 --directory site"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.0"
+  },
+  "dependencies": {
+    "@bunny.net/database-client": "^0.0.3",
+    "@bunny.net/edgescript-sdk": "^0.13.0"
+  }
+}
