@@ -1,0 +1,10 @@
+{
+  // `bunny sites deploy` picks these up, so a bare `bunny sites deploy` works.
+  "sites": {
+    "name": "smiles",
+    "dir": "./site/dist",
+    "build": "npm run build:site",
+    // Four real pages, not one app: an unknown path should 404, not serve home.
+    "spa": false,
+  },
+}

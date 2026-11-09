@@ -1,0 +1,31 @@
+{
+  "name": "smiles",
+  "version": "1.0.0",
+  "description": "One question customer satisfaction, running entirely on bunny.net.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "tsc --noEmit && svelte-check --tsconfig ./site/tsconfig.json",
+    "dev": "vite",
+    "build": "npm run build:edge && npm run build:site",
+    "build:edge": "node scripts/build.mjs",
+    "build:site": "vite build",
+    "deploy": "npm run deploy:api && npm run deploy:widget && npm run deploy:site",
+    "deploy:api": "npm run build:edge && cd api && bunny scripts deploy ../dist/api.js",
+    "deploy:widget": "npm run build:edge && cd widget && bunny scripts deploy ../dist/widget.js",
+    "deploy:site": "npm run build:site && bunny sites deploy ./site/dist"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "esbuild": "^0.28.2",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.8",
+    "typescript": "^5.7.0",
+    "vite": "^8.3.6"
+  },
+  "dependencies": {
+    "@bunny.net/database-client": "^0.0.3",
+    "@bunny.net/edgescript-sdk": "^0.13.0"
+  }
+}
